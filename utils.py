@@ -1,6 +1,7 @@
 import os
 from venmo_api import Client, PaymentPrivacy
 from notifiers import get_notifier
+from venmo_api.models.payment_method import BankAccount
 
 def get_env(env):
   """
@@ -17,7 +18,7 @@ def get_env(env):
       print("   Exiting script. Please add and run again.")
       quit()
 
-env_vars = ["VENMO_ACCESS_TOKEN", "TELEGRAM_CHAT_ID", "TELEGRAM_BOT_TOKEN", "K_FRIEND_ID", "C_FRIEND_ID", "W_FRIEND_ID", "J_FRIEND_ID"]
+env_vars = ["VENMO_ACCESS_TOKEN", "TELEGRAM_CHAT_ID", "TELEGRAM_BOT_TOKEN"]
 
 def verify_env_vars(vars, numOfExpected):
   """
@@ -64,6 +65,18 @@ class Venmo:
     def __init__(self, access_token):
         self.client = Client(access_token=access_token)
 
+    def get_payment_methods(self):
+        return self.client.payment.get_payment_methods()
+
+    def get_bank_payment_method(self):
+        payment_methods = self.get_payment_methods()
+        bank_payment_method = None
+        for payment_method in payment_methods:
+            if type(payment_method) == BankAccount:
+                bank_payment_method = payment_method
+
+        return bank_payment_method
+
     def get_user_id_by_username(self, username):
         user = self.client.user.get_user_by_username(username=username)
         if (user):
@@ -72,9 +85,10 @@ class Venmo:
             print("ERROR: user did not comeback. Check username.")
             return None
 
-    def request_money(self, id, amount, description, callback = None):
+    def send_money(self, user_id, amount, description, callback = None):
         # Returns a boolean: true if successfully requested
-        return self.client.payment.request_money(amount, description, id, PaymentPrivacy.PUBLIC, None, callback)
+        funding_source_id = self.get_bank_payment_method().id
+        return self.client.payment.send_money(amount, description, user_id, funding_source_id, None, PaymentPrivacy.PRIVATE, callback)
 
 class Telegram:
     def __init__(self, bot_token, chat_id):
@@ -83,4 +97,4 @@ class Telegram:
         self.client = get_notifier('telegram')
 
     def send_message(self, message):
-        self.client.notify(message=message, token=self.bot_token, chat_id=self.chat_id)
+        return self.client.notify(message=message, token=self.bot_token, chat_id=self.chat_id)
