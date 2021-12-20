@@ -18,6 +18,7 @@ def main(now):
   month = get_month(now)
   venmo = Venmo(access_token)
   telegram = Telegram(bot_token, chat_id)
+  telegram.send_message("🕘 Monthly Venmo payment scheduler running for {month}")
 
   friends = [
     {
@@ -36,16 +37,16 @@ def main(now):
     name = friend["name"]
     user_name = friend["user_name"]
     user_id = venmo.get_user_id_by_username(user_name)
-    description = friend["description"] + " - for " + month
+    description = friend["description"] + " - for {month}"
     amount = friend["amount"]
     message = "Good news!\n"
-    message += "I have successfully sent money to " + name
+    message += "I have successfully sent money to {name}"
     success = venmo.send_money(user_id, amount, description, telegram.send_message(message))
     if success:
       successfulRequests.append(success)
 
   if len(successfulRequests) == expectedRequests:
-    print("✅ Ran script successfully and sent " + str(expectedRequests) + " Venmo requests.")
+    print("✅ Ran script successfully and sent " + str(expectedRequests) + " Venmo requests")
   else:
     print("❌ Something went wrong. Only sent " + str(len(successfulRequests)) + "/" + str(expectedRequests) + " venmo requests.")
 
