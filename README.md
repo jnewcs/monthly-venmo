@@ -83,6 +83,11 @@ To get a local copy up and running follow these simple steps.
 
 For help installing both of these in WSL, check out this article: https://ruslanmv.com/blog/Python3-in-Windows-with-Ubuntu
 
+- Telegram
+  1. Create a Telegram account and (create a new bot)[https://core.telegram.org/bots]
+  2. Once the bot is created, open a new private channel and make the bot an Administrator of the channel
+  3. Follow this (Medium article)[https://sean-bradley.medium.com/get-telegram-chat-id-80b575520659] to find the channel's ID
+
 ### Installation
 
 1. Clone the repo
