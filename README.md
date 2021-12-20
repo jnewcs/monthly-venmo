@@ -81,6 +81,8 @@ To get a local copy up and running follow these simple steps.
 - Python >= v3
 - `pip`
 
+For help installing both of these in WSL, check out this article: https://ruslanmv.com/blog/Python3-in-Windows-with-Ubuntu
+
 ### Installation
 
 1. Clone the repo
