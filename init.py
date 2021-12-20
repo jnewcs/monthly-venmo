@@ -38,12 +38,8 @@ def main(now):
     user_id = venmo.get_user_id_by_username(user_name)
     description = friend["description"] + " - for " + month
     amount = friend["amount"]
-    message = f"""Good news old sport!
-
-I have successfully sent money to {name}.
-
-— Efron 🤵🏻‍♂️
-    """
+    message = "Good news!\n"
+    message += "I have successfully sent money to " + name
     success = venmo.send_money(user_id, amount, description, telegram.send_message(message))
     if success:
       successfulRequests.append(success)
