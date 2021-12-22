@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 from datetime import datetime
 
-from utils import get_env, env_vars, get_month, Venmo, Telegram
+from utils import get_env, env_vars, Venmo, Telegram, load_json
 
 def main(now):
   """
@@ -15,40 +15,41 @@ def main(now):
 
   access_token, chat_id, bot_token = actualVars
 
-  month = get_month(now)
-  venmo = Venmo(access_token)
+  date = now.strftime("%B %d, %Y")
+  time = now.strftime("%H:%M%p")
   telegram = Telegram(bot_token, chat_id)
-  telegram.send_message("🕘 Monthly Venmo payment scheduler running for " + month)
+  def dual_print(message):
+    print(message)
+    telegram.send_message(message)
 
-  friends = [
-    {
-      "name": "Saumya",
-      "user_name": "Saumya-Singhal",
-      "amount": 1.00,
-      "type": "send",
-      "description": "Testing automated Venmo Payments"
-    }
-  ]
+  dual_print(f'🕘 Monthly Venmo payment scheduler running on {date} at {time}')
 
-  successfulRequests = []
-  expectedRequests = len(friends)
+  scheduled_requests = load_json('data.json')
 
-  for friend in friends:
-    name = friend["name"]
-    user_name = friend["user_name"]
-    user_id = venmo.get_user_id_by_username(user_name)
-    description = friend["description"] + " - for " + month
-    amount = friend["amount"]
+  sentRequests = []
+  non_test_requests = list(filter(lambda r: r["test"] == False, scheduled_requests))
+  expectedRealRequests = len(non_test_requests)
+
+  for scheduled_request in scheduled_requests:
+    name = scheduled_request["name"]
+    user_name = scheduled_request["user_name"]
+    description = f'{scheduled_request["description"]} for {date} at {time}'
+    amount = scheduled_request["amount"]
     message = "Good news!\n"
     message += "I have successfully sent money to " + name
-    success = venmo.send_money(user_id, amount, description, telegram.send_message(message))
-    if success:
-      successfulRequests.append(success)
+    if scheduled_request["test"] == True:
+      dual_print("Testing scheduled message to " + name)
+    else:
+      venmo = Venmo(access_token)
+      user_id = venmo.get_user_id_by_username(user_name)
+      success = venmo.send_money(user_id, amount, description, dual_print(message))
+      if success:
+        sentRequests.append(success)
 
-  if len(successfulRequests) == expectedRequests:
-    print("✅ Ran script successfully and sent " + str(expectedRequests) + " Venmo requests")
+  if len(sentRequests) == expectedRealRequests:
+    dual_print("✅ Ran script successfully and sent " + str(expectedRealRequests) + " actual Venmo requests")
   else:
-    print("❌ Something went wrong. Only sent " + str(len(successfulRequests)) + "/" + str(expectedRequests) + " venmo requests.")
+    dual_print("❌ Something went wrong. Only sent " + str(len(sentRequests)) + "/" + str(expectedRealRequests) + " venmo requests.")
 
 now = datetime.now()
 main(now)

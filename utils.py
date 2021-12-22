@@ -2,6 +2,14 @@ import os
 from venmo_api import Client, PaymentPrivacy
 from notifiers import get_notifier
 from venmo_api.models.payment_method import BankAccount
+import json
+
+def load_json(file_path):
+    json_data = None
+    with open(file_path) as f:
+        json_data = json.load(f)["data"]
+
+    return json_data
 
 def get_env(env):
   """
