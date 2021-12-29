@@ -1,7 +1,13 @@
 from dotenv import load_dotenv
 from datetime import datetime
+import argparse
 
 from utils import get_env, env_vars, Venmo, Telegram, load_json
+
+# Set Parameters
+parser = argparse.ArgumentParser(description='Sends Venmo payments/requests.')
+parser.add_argument('--type', help='Script type: ENUM(monthly bi_yearly)', default='monthly')
+parser.add_argument('--env', help='Script type: ENUM(development production)', default='development')
 
 def main(now):
   """
@@ -22,13 +28,17 @@ def main(now):
     print(message)
     telegram.send_message(message)
 
-  dual_print(f'🕘 Monthly Venmo payment scheduler running on {date} at {time}')
+  args = parser.parse_args()
+  script_type = args.type
+  script_env = args.env
+  development_environment = script_env == "development"
+  scheduled_requests = load_json(f'{script_type}_data.json')
 
-  scheduled_requests = load_json('data.json')
+  script_type_as_english = "Monthly" if script_type == "monthly" else "Bi-Yearly"
+  dual_print(f'🕘 {script_type_as_english} Venmo payment scheduler running on {date} at {time}')
 
   sentRequests = []
-  non_test_requests = list(filter(lambda r: r["test"] == False, scheduled_requests))
-  expectedRealRequests = len(non_test_requests)
+  expectedRequests = len(scheduled_requests)
 
   for scheduled_request in scheduled_requests:
     name = scheduled_request["name"]
@@ -37,7 +47,7 @@ def main(now):
     amount = scheduled_request["amount"]
     message = "Good news!\n"
     message += "I have successfully sent money to " + name
-    if scheduled_request["test"] == True:
+    if development_environment:
       dual_print("Testing scheduled message to " + name)
     else:
       venmo = Venmo(access_token)
@@ -46,10 +56,12 @@ def main(now):
       if success:
         sentRequests.append(success)
 
-  if len(sentRequests) == expectedRealRequests:
-    dual_print("✅ Ran script successfully and sent " + str(expectedRealRequests) + " actual Venmo requests")
+  if development_environment:
+    dual_print(f'✅ Ran script successfully and tested {expectedRequests} Venmo requests')
+  elif len(sentRequests) == expectedRequests:
+    dual_print(f'✅ Ran script successfully and sent {expectedRequests} actual Venmo requests')
   else:
-    dual_print("❌ Something went wrong. Only sent " + str(len(sentRequests)) + "/" + str(expectedRealRequests) + " venmo requests.")
+    dual_print(f'❌ Something went wrong. Only sent {len(sentRequests)} / {expectedRequests} venmo requests.')
 
 now = datetime.now()
 main(now)

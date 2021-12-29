@@ -5,9 +5,9 @@ name: Run Script
 
 on:
   schedule:
-    # 4pm UTC on the 7th of the month
-    # https://crontab.guru/#0_16_7_*_*
-    - cron: "0 16 7 * *"
+    # 4pm UTC on the 7th every six months
+    # https://crontab.guru/#0_16_7_*/6_*
+    - cron: "0 16 7 */6 *"
   workflow_dispatch:
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Run script
         run: |
-          python init.py
+          python init.py --type=bi_yearly --env=production
         env:
           VENMO_ACCESS_TOKEN: ${{ secrets.VENMO_ACCESS_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
