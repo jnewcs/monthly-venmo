@@ -103,10 +103,12 @@ For help installing both of these in WSL, check out this article: https://ruslan
    ```sh
    python3 health.py
    ```
-5. Run the main script:
+5. Run the main script with the `monthly` option:
    ```sh
-   python3 init.py
+   python3 init.py --type=monthly
    ```
+   - Passing in the `--type=monthly` option will pull the list from the `monthly_data.json` file.
+   - Passing in the `--type=bi_yearly` option will pull the list from the `bi_yearly_data.json` file.
 
 ### Updating the `requirements.txt`
 
