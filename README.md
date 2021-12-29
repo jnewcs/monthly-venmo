@@ -103,7 +103,7 @@ For help installing both of these in WSL, check out this article: https://ruslan
    ```sh
    python3 health.py
    ```
-5. Run the main script with the `monthly` option:
+5. Run the main script with the `--type` option:
    ```sh
    python3 init.py --type=monthly
    ```
