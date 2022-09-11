@@ -5,9 +5,9 @@ name: Monthly Venmo Scheduler
 
 on:
   schedule:
-    # 4pm UTC on the 7th of the month
+    # 4pm UTC on the 8th of the month
     # https://crontab.guru/#0_16_7_*_*
-    - cron: "0 16 7 * *"
+    - cron: "0 16 8 * *"
   workflow_dispatch:
 
 jobs:
