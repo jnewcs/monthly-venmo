@@ -3,6 +3,7 @@ from datetime import datetime
 import argparse
 
 from utils import get_env, env_vars, Venmo, Telegram, load_json
+import json
 
 # Set Parameters
 parser = argparse.ArgumentParser(description='Sends Venmo payments/requests.')
@@ -19,7 +20,7 @@ def main(now):
   for var in env_vars:
     actualVars.append(get_env(var))
 
-  access_token, chat_id, bot_token = actualVars
+  access_token, chat_id, bot_token, user_json_string_data = actualVars
 
   date = now.strftime("%B %d, %Y")
   time = now.strftime("%H:%M%p")
@@ -32,7 +33,8 @@ def main(now):
   script_type = args.type
   script_env = args.env
   development_environment = script_env == "development"
-  scheduled_requests = load_json(f'{script_type}_data.json')
+  # We pull data down from USER_JSON_STRING_DATA secret stored in Github
+  scheduled_requests = json.loads(user_json_string_data)
 
   script_type_as_english = "Monthly" if script_type == "monthly" else "Bi-Yearly"
   dual_print(f'🕘 {script_type_as_english} Venmo payment scheduler running on {date} at {time}')

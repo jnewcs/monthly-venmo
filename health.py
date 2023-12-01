@@ -9,7 +9,7 @@ def main(now):
   time = now.strftime("%H:%M%p")
 
   print("🔍 Verifying environment variables...")
-  numOfExpected =  3
+  numOfExpected =  4
   envVarsAreDefined = verify_env_vars(env_vars, numOfExpected)
 
   if envVarsAreDefined:
