@@ -19,6 +19,7 @@ def main(now):
 
   access_token, chat_id, bot_token, user_json_string_data = get_env_vars(env_vars)
 
+  print(user_json_string_data)
   venmo = Venmo(access_token)
   telegram = Telegram(bot_token, chat_id)
   def dual_print(message):
