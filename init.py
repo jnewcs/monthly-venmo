@@ -37,7 +37,9 @@ def main(now):
   # We pull data down from USER_JSON_STRING_DATA secret stored in Github
   # It is base64 encoded so we need to decode it and then load it as json
   user_json_string_data = base64.b64decode(user_encoded_data)
+  print("user_json_string_data + " + user_json_string_data)
   scheduled_requests = json.loads(user_json_string_data)
+  print(scheduled_requests)
 
   script_type_as_english = "Monthly" if script_type == "monthly" else "Bi-Yearly"
   dual_print(f'🕘 {script_type_as_english} Venmo payment scheduler running on {date} at {time}')
