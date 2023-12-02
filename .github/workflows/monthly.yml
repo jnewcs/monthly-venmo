@@ -38,4 +38,4 @@ jobs:
           VENMO_ACCESS_TOKEN: ${{ secrets.VENMO_ACCESS_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          USER_JSON_STRING_DATA: ${{ secrets.USER_JSON_STRING_DATA }}
+          USER_ENCODED_DATA: ${{ secrets.USER_ENCODED_DATA }}

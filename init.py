@@ -4,6 +4,7 @@ import argparse
 
 from utils import get_env, env_vars, Venmo, Telegram, load_json
 import json
+import base64
 
 # Set Parameters
 parser = argparse.ArgumentParser(description='Sends Venmo payments/requests.')
@@ -20,7 +21,7 @@ def main(now):
   for var in env_vars:
     actualVars.append(get_env(var))
 
-  access_token, chat_id, bot_token, user_json_string_data = actualVars
+  access_token, chat_id, bot_token, user_encoded_data = actualVars
 
   date = now.strftime("%B %d, %Y")
   time = now.strftime("%H:%M%p")
@@ -34,6 +35,8 @@ def main(now):
   script_env = args.env
   development_environment = script_env == "development"
   # We pull data down from USER_JSON_STRING_DATA secret stored in Github
+  # It is base64 encoded so we need to decode it and then load it as json
+  user_json_string_data = base64.b64decode(user_encoded_data).decode("utf-8")
   scheduled_requests = json.loads(user_json_string_data)
 
   script_type_as_english = "Monthly" if script_type == "monthly" else "Bi-Yearly"
