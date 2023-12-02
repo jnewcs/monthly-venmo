@@ -17,7 +17,7 @@ def main(now):
   else:
     print('❌ Failed to verify environment variables.\n')
 
-  access_token, chat_id, bot_token = get_env_vars(env_vars)
+  access_token, chat_id, bot_token, user_json_string_data = get_env_vars(env_vars)
 
   venmo = Venmo(access_token)
   telegram = Telegram(bot_token, chat_id)
