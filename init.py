@@ -36,7 +36,7 @@ def main(now):
   development_environment = script_env == "development"
   # We pull data down from USER_JSON_STRING_DATA secret stored in Github
   # It is base64 encoded so we need to decode it and then load it as json
-  user_json_string_data = base64.b64decode(user_encoded_data).decode("utf-8")
+  user_json_string_data = base64.b64decode(user_encoded_data)
   scheduled_requests = json.loads(user_json_string_data)
 
   script_type_as_english = "Monthly" if script_type == "monthly" else "Bi-Yearly"
@@ -47,7 +47,9 @@ def main(now):
 
   for scheduled_request in scheduled_requests:
     name = scheduled_request["name"]
+    print("name + " + name)
     user_name = scheduled_request["user_name"]
+    print("user_name + " + user_name)
     description = f'{scheduled_request["description"]} for {date} at {time}'
     amount = scheduled_request["amount"]
     message = "Good news!\n"
