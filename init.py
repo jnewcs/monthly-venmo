@@ -36,10 +36,8 @@ def main(now):
   development_environment = script_env == "development"
   # We pull data down from USER_JSON_STRING_DATA secret stored in Github
   # It is base64 encoded so we need to decode it and then load it as json
-  user_json_string_data = base64.b64decode(user_encoded_data)
-  dual_print("user_json_string_data + " + user_json_string_data)
-  scheduled_requests = json.loads(user_json_string_data)
-  # dual_print(scheduled_requests)
+  user_json_string_data = base64.b64decode(user_encoded_data).decode("utf-8")
+  scheduled_requests = json.loads(user_json_string_data)["data"]
 
   script_type_as_english = "Monthly" if script_type == "monthly" else "Bi-Yearly"
   dual_print(f'🕘 {script_type_as_english} Venmo payment scheduler running on {date} at {time}')
@@ -47,23 +45,21 @@ def main(now):
   sentRequests = []
   expectedRequests = len(scheduled_requests)
 
-  # for scheduled_request in scheduled_requests:
-  #   name = scheduled_request["name"]
-  #   print("name + " + name)
-  #   user_name = scheduled_request["user_name"]
-  #   print("user_name + " + user_name)
-  #   description = f'{scheduled_request["description"]} for {date} at {time}'
-  #   amount = scheduled_request["amount"]
-  #   message = "Good news!\n"
-  #   message += "I have successfully sent money to " + name
-  #   if development_environment:
-  #     dual_print("Testing scheduled message to " + name)
-  #   else:
-  #     venmo = Venmo(access_token)
-  #     user_id = venmo.get_user_id_by_username(user_name)
-  #     success = venmo.send_money(user_id, amount, description, dual_print(message))
-  #     if success:
-  #       sentRequests.append(success)
+  for scheduled_request in scheduled_requests:
+    name = scheduled_request["name"]
+    user_name = scheduled_request["user_name"]
+    description = f'{scheduled_request["description"]} for {date} at {time}'
+    amount = scheduled_request["amount"]
+    message = "Good news!\n"
+    message += "I have successfully sent money to " + name
+    if development_environment:
+      dual_print("Testing scheduled message to " + name)
+    else:
+      venmo = Venmo(access_token)
+      user_id = venmo.get_user_id_by_username(user_name)
+      success = venmo.send_money(user_id, amount, description, dual_print(message))
+      if success:
+        sentRequests.append(success)
 
   if development_environment:
     dual_print(f'✅ Ran script successfully and tested {expectedRequests} Venmo requests')

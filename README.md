@@ -107,8 +107,27 @@ For help installing both of these in WSL, check out this article: https://ruslan
    ```sh
    python3 init.py --type=monthly
    ```
-   - Passing in the `--type=monthly` option will pull the list from the `monthly_data.json` file.
-   - Passing in the `--type=bi_yearly` option will pull the list from the `bi_yearly_data.json` file.
+   - Passing in the `--type=monthly` option will pull the list the base64 encoded `USER_ENCODED_DATA` variable
+   - Passing in the `--type=bi_yearly` option will pull the list the base64 encoded `USER_ENCODED_DATA` variable
+
+To set the `USER_ENCODED_DATA` variable, you should do this:
+
+```javascript
+json_data = {
+  "data": [
+    {
+      "name": "<name>",
+      "user_name": "<venmo_user_name>",
+      "amount": 15.00,
+      "type": "send",
+      "description": "<payment_description>"
+    }
+  ]
+}
+btoa(JSON.stringify(json_data))
+```
+
+Then create a new GitHub action string called `USER_ENCODED_DATA` with the base64 string ^
 
 ### Updating the `requirements.txt`
 
